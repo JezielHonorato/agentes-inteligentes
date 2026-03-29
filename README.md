@@ -16,3 +16,32 @@ em que $P^*$ representa o conjunto de todas as sequências possíveis de percep�
 Em vez de perguntar apenas se o agente "funciona", a Inteligência Artificial adota uma abordagem baseada no consequencialismo: nós avaliamos o comportamento de um agente pelas consequências de suas ações. Quando um agente atua, ele faz com que o ambiente passe por uma sequência de estados; se essa sequência for desejável, o agente teve um bom desempenho.
 
 A partir dessa medida, definimos um **agente racional** como aquele que, para cada sequência de percepções, escolhe a ação que tem a expectativa de maximizar a sua medida de desempenho. Como regra geral de design, a medida de desempenho deve ser definida de acordo com o que você *realmente deseja que seja alcançado no ambiente*, e não de acordo com a forma como você acha que o agente deveria se comportar.
+
+## Agentes
+
+### Agentes baseados em tabela.
+
+Os agentes baseados em tabela agem de modo que suas percepções são armazenadas em sequencia de modo que sua proxima decisão ira depender da situação listada na tabela.
+
+Todas as possiveis situações deverão estar listadas na tabela, ou seja, o numero de linhas da minha tabela exponencialmente a depender de quais modos o ambiente pode ser alterado
+[`table_agent`](table_agent.py)
+
+### Agentes Reflexivos.
+
+Os agentes baseados em tabela agem de modo que suas percepções são armazenadas em sequencia de modo que sua proxima decisão ira depender da situação listada na tabela.
+
+Todas as possiveis situações deverão estar listadas na tabela, ou seja, o numero de linhas da minha tabela exponencialmente a depender de quais modos o ambiente pode ser alterado
+[`table_agent`](table_agent.py)
+
+### Agentes baseados em Modelo.
+
+Os agentes baseados em tabela agem de modo que suas percepções são armazenadas em sequencia de modo que sua proxima decisão ira depender da situação listada na tabela.
+
+Todas as possiveis situações deverão estar listadas na tabela, ou seja, o numero de linhas da minha tabela exponencialmente a depender de quais modos o ambiente pode ser alterado
+[`table_agent`](table_agent.py)
+
+
+
+Fontes:
+- Stuart Russell and Peter Norvig. Artificial Intelligence: A Modern Approach. 
+- Aulas praticas e teóricas.
