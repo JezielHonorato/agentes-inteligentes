@@ -82,12 +82,18 @@ def make_markov_model(cleaned_txt, n_gram=2):
     # Estado atual (n palavras) + próximo estado (n palavras) = 2n palavras, então o limite seguro para o loop é len(cleaned_txt) - 2n + 1
     limite_range = len(cleaned_txt) - (n_gram * 2) + 1
 
-    for i in range(limite_range):
-        # usa slicing para separar o estado atual e o próximo estado.
-        token_atual = " ".join(cleaned_txt[i : i + n_gram])
-        next_token = " ".join(cleaned_txt[i + n_gram : i + (n_gram * 2)])
+    for part in cleaned_txt:
+        limite_range = len(part) - (n_gram * 2) + 1
 
-        markov_model[token_atual][next_token] += 1
+        # Ignora sentenças que são menores que o estado atual + próximo estado
+        if limite_range < 1:
+            continue
+
+        # usa slicing para separar o estado atual e o próximo estado.
+        for i in range(limite_range):
+            token_atual = " ".join(part[i : i + n_gram])
+            next_token = " ".join(part[i + n_gram : i + (n_gram * 2)])
+            markov_model[token_atual][next_token] += 1
 
     # Novo dicionário para armazenar as probabilidades.
     prob_model = defaultdict(lambda: defaultdict(float))
