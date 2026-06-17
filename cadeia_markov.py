@@ -65,10 +65,16 @@ def clean_txt(txt):
         # Tokeniza avisando informando o idioma, inglês é default.
         tokens = word_tokenize(line, language="portuguese")
 
-        for word in tokens:
-            # Se for ma palavra, ou seja apenas letras e tamanho maior ou igual a 1
-            if word.isalpha():
-                cleaned_txt.append(word)
+        # Se for ma palavra, ou seja apenas letras e tamanho maior ou igual a 1
+        # for word in tokens:
+        #     if word.isalpha():
+        #         cleaned_txt.append(word)
+        valid_tokens = [word for word in tokens if word.isalpha()]
+
+        if valid_tokens:
+            valid_tokens.insert(0, "<s>")
+            valid_tokens.append("</s>")
+            cleaned_txt.append(valid_tokens)
 
     return cleaned_txt
 
@@ -107,17 +113,29 @@ def make_markov_model(cleaned_txt, n_gram=2):
     return prob_model
 
 
-def generate_story(markov_model, limite=100, inicio="quando o"):
+def generate_story(markov_model, limite=100, inicio=None):
     """Gera texto novo com base nas probabilidades do modelo."""
     n = 0
-    token_atual = inicio.lower()
-    story = token_atual + " "
 
-    # Se a palavra inicial não estiver no modelo, avisa e para.
-    if token_atual not in markov_model:
-        return f"Erro: O estado inicial '{inicio}' não existe no modelo treinado."
+    if not inicio:
+        start_states = [
+            state for state in markov_model.keys() if state.startswith("<s>")
+        ]
+        if not start_states:
+            return "Erro: Nenhum estado inicial válido encontrado."
+        token_atual = random.choice(start_states)
+    else:
+        token_atual = inicio.lower()
+        if token_atual not in markov_model:
+            return f"Erro: O estado inicial '{inicio}' não existe no modelo treinado."
+
+    story_tokens = token_atual.split()
 
     while n < limite:
+        # erro em que não existia para onde seguir. A verificação acima serve somente para o token da inicialização.
+        if token_atual not in markov_model:
+            break
+
         # Sorteia o próximo estado baseado nas probabilidades indexadas.
         next_token_list = random.choices(
             list(markov_model[token_atual].keys()),
@@ -125,10 +143,19 @@ def generate_story(markov_model, limite=100, inicio="quando o"):
         )
 
         token_atual = next_token_list[0]
-        story += token_atual + " "
+        story_tokens.extend(token_atual.split())
+
+        if "</s>" in token_atual:
+            break
+
         n += 1
 
-    return story.strip()
+    story = " ".join(story_tokens)
+    story = story.replace("<s>", "").replace("</s>", "").strip()
+
+    # story = re.sub(r"\s+", " ", story)
+
+    return story
 
 
 text = read_text(assets, sentences=True)
@@ -140,6 +167,10 @@ print("numero de palavras = ", len(cleaned_text))
 markov_model = make_markov_model(cleaned_text, n_gram=2)
 print("numero de estados = ", len(markov_model.keys()))
 
-print("\nGerando 20 histórias:\n" + "-" * 20)
-for i in range(20):
-    print(str(i + 1) + ". ", generate_story(markov_model, inicio="quando o", limite=8))
+print("\nGerando 10 histórias:\n" + "-" * 20)
+for i in range(10):
+    print(f"{i + 1:02d}. ", generate_story(markov_model, limite=8))
+    
+print("\nGerando 10 histórias com n_grama inicial definido:\n" + "-" * 20)
+for i in range(10):
+    print(f"{i + 1:02d}. ", generate_story(markov_model, inicio="inteligencia artificial",limite=8))
